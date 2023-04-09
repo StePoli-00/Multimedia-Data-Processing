@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "attività-write_int32 grana",
+      "appliesTo": "write_int32 grana/",
+      "type": "launch"
+    }
+  ]
+}

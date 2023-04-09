@@ -1,0 +1,3 @@
+﻿  huffman1.cpp
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Huffman1\Huffman 1\Huffman 1\huffman1.cpp(355,25): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Huffman 1.vcxproj -> C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Huffman1\Huffman 1\x64\Debug\Huffman 1.exe

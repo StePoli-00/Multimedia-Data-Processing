@@ -1,0 +1,3 @@
+﻿  sort_int.cpp
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\2-sort int more oop\sort_int.cpp(226,12): warning C4930: 'vector d(void)': funzione con prototipo non chiamata. Si intendeva utilizzare una definizione di variabile?
+  sort int more oop.vcxproj -> C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\x64\Debug\2-Sort Int more oop.exe

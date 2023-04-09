@@ -1,0 +1,3 @@
+﻿  packbits.cpp
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Packbits\packbits.cpp(112,35): warning C4267: 'argomento': conversione da 'size_t' a 'uint32_t'. Possibile perdita di dati.
+  Packbits.vcxproj -> C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Packbits\x64\Debug\Packbits.exe

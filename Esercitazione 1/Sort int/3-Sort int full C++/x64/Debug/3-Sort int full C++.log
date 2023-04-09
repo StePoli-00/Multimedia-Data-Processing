@@ -1,0 +1,35 @@
+﻿  sort_int more c++.cpp
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(82,19): error C2187: errore di sintassi: '*' non è previsto in questo punto
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(114,2): message : vedere il riferimento all'istanza 'vector<T>' di modello classe di cui è in corso la compilazione
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(82,21): error C2065: 'tmp': identificatore non dichiarato
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(83,17): error C2065: 'tmp': identificatore non dichiarato
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(89,17): error C2065: 'tmp': identificatore non dichiarato
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(92,21): error C2065: 'tmp': identificatore non dichiarato
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(262,10): error C2371: 'start': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(251,10): message : vedere la dichiarazione di 'start'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(263,10): error C2371: 'stop': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(252,10): message : vedere la dichiarazione di 'stop'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(264,35): error C2086: 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>> it': ridefinizione
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(253,35): message : vedere la dichiarazione di 'it'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(266,30): error C2088: '!=': non valido per class
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(275,10): error C2371: 'start': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(251,10): message : vedere la dichiarazione di 'start'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(276,10): error C2371: 'stop': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(252,10): message : vedere la dichiarazione di 'stop'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(277,35): error C2086: 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>> it': ridefinizione
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(253,35): message : vedere la dichiarazione di 'it'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(291,34): error C2371: 'start': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(251,10): message : vedere la dichiarazione di 'start'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(292,34): error C2371: 'stop': ridefinizione. Tipi di base differenti.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(252,10): message : vedere la dichiarazione di 'stop'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(293,30): error C2088: '!=': non valido per class
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(303,25): error C2374: 'v': ridefinizione. Inizializzazione multipla.
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\3-Sort int full C++\sort_int more c++.cpp(176,25): message : vedere la dichiarazione di 'v'

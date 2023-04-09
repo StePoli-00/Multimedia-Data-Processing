@@ -1,0 +1,7 @@
+﻿  sort_int with move.cpp
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(135,36): warning C4099: 'mdp::vector<esempio>': il nome del tipo che in precedenza utilizzava 'struct' ora utilizza 'class'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(135,13): message : vedere la dichiarazione di 'mdp::vector<esempio>'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(178,5): error C2593: 'operator =' è ambiguo
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(49,17): message : potrebbe essere 'mdp::vector<esempio> &mdp::vector<esempio>::operator =(const mdp::vector<esempio> &&)'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(40,17): message : o 'mdp::vector<esempio> &mdp::vector<esempio>::operator =(mdp::vector<esempio>)'
+C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Esercitazione 1\Sort int\4-Sort int with move\sort_int with move.cpp(178,5): message : durante la ricerca di corrispondenza con l'elenco di argomenti '(mdp::vector<esempio>, mdp::vector<esempio>)'
