@@ -39,4 +39,8 @@
 *.pdb
 *.idb
 *.ilk
+*.sln
+.vs
+x64
+
 
