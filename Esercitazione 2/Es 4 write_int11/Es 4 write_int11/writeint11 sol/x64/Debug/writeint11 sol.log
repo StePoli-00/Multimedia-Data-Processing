@@ -1,3 +1,0 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: la directory intermedia (x64\Debug\) contiene file condivisi da un altro progetto (writeint11 sol.vcxproj). Tale condizione può comportare un comportamento di pulizia e ricompilazione non corretto.
-  write_int11 sol.cpp
-  writeint11 sol.vcxproj -> C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 2\Es 4 write_int11\Es 4 write_int11\x64\Debug\write_int11sol.exe

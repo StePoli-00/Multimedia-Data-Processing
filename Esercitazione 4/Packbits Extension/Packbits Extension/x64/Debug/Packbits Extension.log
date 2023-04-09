@@ -1,4 +1,0 @@
-﻿  packbits_extension.cpp
-C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Packbits Extension\Packbits Extension\packbits_extension.cpp(164,40): warning C4267: 'inizializzazione': conversione da 'size_t' a 'uint8_t'. Possibile perdita di dati.
-C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Packbits Extension\Packbits Extension\packbits_extension.cpp(187,37): warning C4267: 'inizializzazione': conversione da 'size_t' a 'uint8_t'. Possibile perdita di dati.
-  Packbits Extension.vcxproj -> C:\Users\poli1\Desktop\Stefano\Unimore\Corsi\Multimedia Data Processing\Lab\Esercitazione 4\Packbits Extension\Packbits Extension\x64\Debug\Packbits Extension.exe
