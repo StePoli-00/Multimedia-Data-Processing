@@ -3,9 +3,7 @@
 #include "string.h"
 #include <vector>
 #include <algorithm>
-
-
-
+#include <map>
 
 template<typename T>
 std::istream& raw_read(std::istream& is, T& val, size_t size = sizeof(T)) {
@@ -55,7 +53,7 @@ std::ostream& raw_write(std::ostream& os, const T& val, size_t size = sizeof(T))
 	return os.write(reinterpret_cast<const char*>(&val), size);
 }
 
-//esiste la classe bitset che fa la stessa cosa 
+
 class bitwriter {
 	uint8_t buffer_;
 	uint8_t cur_bit_;
@@ -193,6 +191,50 @@ public:
 	 }
 };
 
+bool compare_probability(node* e1, node* e2)
+{
+	return e1->getProb() > e2->getProb();
+}
+class triple {
+	
+	char symbol_;
+	uint8_t len_;
+	std::vector<uint8_t> code_;
+
+public:
+	triple() {
+		
+	}
+	
+	void setSymbol(char sym)
+	{
+		this->symbol_ = sym;
+	}
+	void setLen(uint8_t l)
+	{
+		this->len_ = l;
+	}
+	void setCode(std::vector<uint8_t> c)
+	{
+		this->code_=c;
+	}
+
+	char getSymbol()
+	{
+		return this->symbol_;
+	}
+	uint8_t getLen()
+	{
+		return this->len_ ;
+	}
+	std::vector<uint8_t> getCode()
+	{
+		return this->code_;
+	}
+
+
+};
+
 void setBit(node *tree, uint8_t *num)
 {
 	
@@ -214,90 +256,134 @@ void setBit(node *tree, uint8_t *num)
 }
 
 
-void createTriplets(node* tree, std::vector<char> buff, bitwriter bw, int n)
+void createTriplets(node* tree, std::vector<uint8_t> buff, bitwriter bw,std::vector<triple> &triplets, int n)
 {
 
 	if (tree->getLeftChild() == NULL && tree->getRightChild() == NULL)
 	{
+		triple tmp;
 		buff.push_back(tree->getBit());
-		bw.write(tree->getSymbol(), 8);
-		
-		for (auto& c : buff)
-		{	
-			bw.write(c,1);
-		}
-		
-		buff.push_back(n);
-
-
+		tmp.setSymbol(tree->getSymbol());
+		tmp.setLen((uint8_t)buff.size());
+		tmp.setCode(buff);
+		triplets.push_back(tmp);
 		buff.pop_back();
 		return;
 	}
-	if (n!=0)
+	else if (n != 0)
 	{
 		buff.push_back(tree->getBit());
 	}
-
-
-	createTriplets(tree->getLeftChild(), buff, bw,++n);
-	createTriplets(tree->getRightChild(), buff, bw,++n);
-}
-
-
-void findSymbol(node* tree, std::vector<char>&buff, char symbol,bool &found)
-{
 	
-	if (tree->getLeftChild() == NULL && tree->getRightChild() == NULL)
+	createTriplets(tree->getRightChild(), buff, bw, triplets, ++n);
+	createTriplets(tree->getLeftChild(), buff, bw, triplets, ++n);
+	
+}
+
+//void findSymbol(node* tree, std::vector<char>&buff, char symbol,bool &found)
+//{
+//	
+//	if (tree->getLeftChild() == NULL && tree->getRightChild() == NULL)
+//	{
+//		if (tree->getSymbol() == symbol)
+//		{
+//			found = true;	
+//		}
+//		
+//		return;
+//	}
+//	
+//	buff.push_back(tree->getBit());
+//	findSymbol(tree->getLeftChild(), buff,symbol,found);
+//	if (found)
+//	{
+//		return;
+//	}
+//	buff.pop_back();
+//	findSymbol(tree->getRightChild(), buff,symbol,found);
+//	if (found)
+//	{
+//		return;
+//	}
+//	buff.pop_back();
+//}
+
+int decompress(char* filein, char* fout)
+{
+	std::ifstream is(filein, std::ios::binary);
+	std::ofstream os(fout);
+	if (!is)
 	{
-		if (tree->getSymbol() == symbol)
+		return 1;
+	}
+	if (!os)
+	{
+		return 1;
+	}
+	char c;
+	uint8_t table_entries;
+	for (int i = 0; i < 8; ++i)
+	{
+		is.read(&c, 1);
+	}
+	is.read(reinterpret_cast<char*>(&table_entries), 1);
+	std::vector<triple> triplets;
+	triple tmp;
+	bitreader br(is);
+	std::vector<uint8_t> buff;
+	for (size_t i = 0; i < (int) table_entries; i++)
+	{
+
+		tmp.setSymbol(br.read(8));
+		tmp.setLen(br.read(5));
+		for (int i = 0; i < tmp.getLen(); ++i)
 		{
-			found = true;	
+			buff.push_back(br.read(1));
 		}
+		tmp.setCode(buff);
+		triplets.push_back(tmp);
+		buff.clear();
+	}
+	uint32_t num_symbol = br.read(32);
+	std::string key;
+	std::map<std::string, char> map;
+	for (auto& t : triplets)
+	{
+		for (auto& c : t.getCode())
+		{
+			key += (char)c;
+		}
+		map[key] = t.getSymbol();
+		key.clear();
 		
-		return;
 	}
 	
-	buff.push_back(tree->getBit());
-	findSymbol(tree->getLeftChild(), buff,symbol,found);
-	if (found)
+
+
+	std::string code;
+	int i = 0;
+	while (1)
 	{
-		return;
-	}
-	buff.pop_back();
-	findSymbol(tree->getRightChild(), buff,symbol,found);
-	if (found)
-	{
-		return;
-	}
-	buff.pop_back();
-}
-
-bool compare_probability(node *e1, node  *e2)
-{
-	return e1->getProb() > e2->getProb();
-}
-
-
-void code_by_huffman(node* tree, std::ifstream& is, std::ostream &os, int32_t &n)
-{
-	char sym;
-	std::vector<char> code;
-	bool found;
-
-	while (is.read(&sym, 1))
-	{
-
-		found = false;
-		findSymbol(tree, code, sym,found);
-		for (auto& x : code)
+		if (i == num_symbol)
 		{
-			os.write(&x,1);
+			break;
 		}
-		code.clear();
+		c = br.read(1);
+		code.push_back((char)c);
+		auto it = map.find(code);
 		
+		if (it != map.end())
+		{
+			os << it->second;
+			code.clear();
+			++i;
+		}
+
 	}
-	return;
+
+	return 0;
 }
+
 int compress(char*filein, char *fileout)
 {
 	std::ifstream is(filein, std::ios::binary);
@@ -333,10 +419,10 @@ int compress(char*filein, char *fileout)
 	for (int i = 0; i < 256; ++i)
 	{
 		v[i] = v[i] / total_node;
-		if (v[i] != 0)
+	/*	if (v[i] != 0)
 		{
 			std::cout << v[i] << '\n';
-		}
+		}*/
 		
 	}
 
@@ -352,7 +438,7 @@ int compress(char*filein, char *fileout)
 	}
 
 	//CREAZIONE ALBERO DI HUFFMAN
-	int n = tree.size() - 1;
+	int n = (int)tree.size() - 1;
 	
 	for (int i = n; i != 0; --i)
 	{
@@ -378,15 +464,39 @@ int compress(char*filein, char *fileout)
 	{
 		os.write(&magic_number[i], sizeof(magic_number[i]));
 	}
-	std::vector<char> buffer;
+	std::vector<uint8_t> buffer;
+	std::vector<triple> triplets;
 	bw.write(table_entries, 8);
-	createTriplets(tree[0], buffer, bw,0);
-	std::ifstream is2(filein, std::ios::binary);
-	int32_t num_symbol = 0;
-	code_by_huffman(tree[0], is2,os,num_symbol);
-	return 0;
 
+	createTriplets(tree[0], buffer, bw,triplets,n);
 	
+	 n = 0;
+	for (auto& t : triplets)
+	{
+		bw.write(t.getSymbol(), 8);
+		bw.write(t.getLen(), 5);
+		for (auto& c : t.getCode())
+		{
+			bw.write(c, 1);
+		}
+		++n;
+	}
+	bw.write(n, 32);
+	std::ifstream is2(filein, std::ios::binary);
+	char c;
+	while (is2.read(&c,1))
+	{
+		for (auto& t : triplets)
+		{
+			if (t.getSymbol() == c)
+			{
+				for (auto& x : t.getCode()) {
+					bw.write(x, 1);
+				}
+			}
+		}
+	}
+	return 0;
 	
 }
 
@@ -402,11 +512,13 @@ int main(int argc, char** argv)
 
 	if (strcmp(argv[1], "c") == 0)
 	{
-		compress(argv[2],argv[3]);
+		int res=compress(argv[2],argv[3]);
+		return res;
 	}
 	else if (strcmp(argv[1], "d") == 0)
 	{
-		//decompress(argv[2]);
+		int res=decompress(argv[2], argv[3]);
+		return res;
 
 	}
 	else

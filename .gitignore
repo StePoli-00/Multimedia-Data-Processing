@@ -42,5 +42,6 @@
 *.sln
 .vs
 x64
-
+#folder
+drawings
 
