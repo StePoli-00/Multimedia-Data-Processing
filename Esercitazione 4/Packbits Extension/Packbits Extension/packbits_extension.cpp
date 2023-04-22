@@ -37,8 +37,9 @@ int decompress(char* filein, char* fout) {
 			break;
 
 		}
-		else if (L >= 0 && L <= 127)
+		else if (L >= 0 && L <= 127) 
 		{
+			
 			for (int i = 0; i < (L + 1); ++i)
 			{
 
@@ -100,62 +101,62 @@ int compress(char* filein, char* fout) {
 	is.read(&prec, sizeof(prec));
 	while (is.read(&curr, sizeof(curr)))
 	{
-		if (curr != prec)
+		
+		if (curr != prec) //per capire se è una copy
 		{
-			if (cnt == 1)
+			if (cnt == 1) //serve per identificare un copy con run da 2 
 			{
-				if (copy_buff.size() == 128)
+				if (copy_buff.size() == 128)// se il buffer è pieno
 				{
-					//svuoto il buffer se non c'è spazio
+
 					uint8_t dim = 127;
 					os.write(reinterpret_cast <char*> (&dim), sizeof(dim));
+					//scrivo i suoi valori
 					for (auto& x : copy_buff)
 					{
 						os.write(&x, sizeof(x));
 					}
 					copy_buff.clear();
-					copy_buff.push_back(prec);
 				}
-
-				else
-				{
+					
+					
+					//metto prec al suo interno
 					copy_buff.push_back(prec);
-
-				}
+				
+				
 			}
-			//Se è run da 2
-			else if (cnt == 2)
+			
+			else if (cnt == 2)// E' una run da 2
 			{
-				//accodo la run nel buff di copy
+				//Accodo la run nel buff di copy,devo controllare però se il buffer non è pieno
+				//duplicazione di codice! 
 				for (int i = 0; i < cnt; ++i)
 				{
-					if (copy_buff.size() != 128)
-					{
-						copy_buff.push_back(prec);
-					}
-					else
+					if (copy_buff.size() == 128)
 					{
 						uint8_t dim = 127;
 						os.write(reinterpret_cast <char*> (&dim), sizeof(dim));
 						write_copy(copy_buff, os);
-						copy_buff.push_back(prec);
 					}
+					copy_buff.push_back(prec);
 				}
-			}//è una run normale
-			else
+			}
+			else //è una run normale 
 			{
+				//scrivo la run 
 				uint8_t dim = 257 - cnt;
 				os.write(reinterpret_cast <char*> (&dim), sizeof(dim));
 				os.write(&prec, sizeof(prec));
 			}
-			//metto il carattere nel buff di copy se c'è spazio
+			
 
-			prec = curr;
-			cnt = 1;
+			prec = curr;	
+			cnt = 1; //vale 1  se ogni carattere successivo è diverso dal precedente
 		}
-		//ho una run, incremento il contatore
-		else
+		
+		else //ho una run, incremento il contatore
 		{
+			++cnt;
 			if (cnt > 2)
 			{
 				if (copy_buff.size() != 0)
@@ -167,8 +168,9 @@ int compress(char* filein, char* fout) {
 
 				}
 			}
+			
 
-			++cnt;
+			
 			prec = curr;
 		
 
