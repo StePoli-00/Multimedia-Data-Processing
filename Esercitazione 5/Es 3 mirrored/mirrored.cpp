@@ -6,8 +6,8 @@
 #include <fstream>
 #include <array>
 
-/*consiglio di grana  r*cols+c-1
-classe crarray-> wrap degli array del c */
+/*consiglio di grana per vertical symmetry  r*cols+c-1
+classe array-> wrap degli array del c */
 template <typename T>
 struct matrix {
 	int rows_, cols_;
