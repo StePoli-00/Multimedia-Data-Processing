@@ -25,6 +25,7 @@ class bitwriter {
 		++n_;
 		if (n_ == 8) {
 			raw_write(os_, buffer_);
+			n_ = 0;
 		}
 		return os_;
 	}

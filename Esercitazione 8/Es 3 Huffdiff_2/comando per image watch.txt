@@ -1,0 +1,1 @@
+@mem(&diff->data_[0],INT16,1,diff->cols_,diff->rows_,diff->cols_*2)

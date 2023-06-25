@@ -1,0 +1,12 @@
+Informazioni per esercizio
+chroma subsampling/color plane
+4: regione logica
+2: campioni colore 
+0: quanti cambiamenti di crominance tra la prima e seconda riga di pixels
+
+ogni 4 pixels di y ci sono 1 campioni colore di cb e 1 di cr
+
+I: indica l'interlacciamento, quando si ha una immagine si può memorizzare in progressivo (tutti insieme)
+non importante in questo esercizio
+F:frame rate a cui stiamo mandando informazioni (non ci interessa)
+A: aspect ratio

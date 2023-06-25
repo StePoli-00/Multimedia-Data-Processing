@@ -57,11 +57,9 @@ struct pam_header {
 	std::string tupltype_, endhdr_;
 
 
-
-
 };
 
-
+//using RGB= std::array<uint8_t, 3>;
 struct RGB {
 	std::array<int, 3> tuple;
 };
@@ -176,9 +174,6 @@ bool load_pam(matrix<RGB>& img, const std::string& filein, pam_header& ph)
 			}
 			img(r, c) = rgb;
 			
-			
-		
-
 		}
 	}
 	return true;
@@ -189,6 +184,17 @@ matrix<T> mirror(const matrix<T>& img)
 {
 	matrix<T> mirrored(img.rows(),img.cols());
 	int k=0, j;
+
+	/*
+	* 
+	* for (int  r = 0; r < img.rows(); r++)
+	* {
+	*	for (int c = 0; c <img.cols()/2; ++c)
+	*	{
+	*		std::swap(img(r,c),img(r,cols-1-c);
+	*	}
+	* }
+	*/
 	for (int  r = 0; r < img.rows(); r++)
 	{
 		j = 0;
@@ -218,6 +224,7 @@ void write_matrix(const matrix<T> &img,const pam_header &ph, std::string fout)
 			for (int  i = 0; i < n; i++)
 			{
 				os.put(img(r, c).tuple[i]);
+				//oppure os.put(img(r,c));
 			}
 		}
 	}

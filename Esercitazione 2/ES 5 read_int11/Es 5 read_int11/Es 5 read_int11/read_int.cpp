@@ -3,8 +3,8 @@
 #include <vector>
 #include <iterator>
 template<typename T>
-std::istream& raw_read(std::istream& is, const T& val, size_t size = sizeof(T)) {
-	return is.read(reinterpret_cast<const char*>(&val), size);
+std::istream& raw_read(std::istream& is,  T& val, size_t size = sizeof(T)) {
+	return is.read(reinterpret_cast<char*>(&val), size);
 }
 
 //num 11 bit con segno l'ultimo 1 essendo in complemento a due vale - il valore del bit in quella posizione
@@ -63,10 +63,11 @@ int main(int argc, char** argv)
 	}
 	bitreader br(is);
 	std::vector<int32_t>v;
+	//da controllare va in Loop infinito
 	while (1)
 	{
 		int32_t num = br(11);
-		if (!br.fail())
+		if (br.fail())
 		{
 			break;
 		}
@@ -81,11 +82,11 @@ int main(int argc, char** argv)
 	{
 		return 1;
 	}
-	copy(v.begin(), v.end(), std::ostream_iterator<int32_t>(os,"\n"));
+	//copy(v.begin(), v.end(), std::ostream_iterator<int32_t>(os,"\n"));
 
-		//for (const auto& x : v) {
-		//	os << x << '\n';
-		//}
+		for (const auto& x : v) {
+			os << x << '\n';
+		}
 	
 		return 0;
 
