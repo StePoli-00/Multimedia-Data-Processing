@@ -1,0 +1,7 @@
+{
+	"witdth" : 6,
+	"height" : 6,
+	"red" : "3f+A",
+	"green" : "/gD+//4A/v/+AP7//gD+//4A/v/+AP7/gICA",
+	"blue" : "3QCA"
+}

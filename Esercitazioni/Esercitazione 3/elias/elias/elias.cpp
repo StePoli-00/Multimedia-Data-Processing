@@ -204,7 +204,14 @@ int decompress(char* filein, char* fout) {
 	unmap(v);
 	for (size_t i = 0; i < v.size(); i++)
 	{
-		os << v[i] << '\n';
+		if (i == v.size() - 1)
+		{
+			os << v[i];
+		}
+		else
+		{
+			os << v[i] << "\n";
+		}
 	}
 	
 	return 0;

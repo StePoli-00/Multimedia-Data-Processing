@@ -1,286 +1,371 @@
-#include <iostream>
+#include <string>
 #include <fstream>
-#include <vector>
-#include <string.h>
-#include <unordered_map>
+#include<unordered_map>
 #include <algorithm>
 
-template<typename T>
-std::istream& raw_read(std::istream& is, T& val, size_t size = sizeof(T)) {
-	return is.read(reinterpret_cast<char*>(&val), size);
-}
-
-class bitreader {
-	uint8_t buffer_;
-	uint8_t n_ = 0;
-	std::istream& is_;
-
+class Node
+{
 public:
-	bitreader(std::istream& is) : is_(is) {}
+	uint8_t sym_=0;
+	uint8_t length_=0;
+	double prob_=0;
+	Node* left_=NULL;
+	Node* right_=NULL;
 
-	uint32_t read_bit() {
-		if (n_ == 0) {
-			raw_read(is_, buffer_);
-			n_ = 8;
-		}
-		--n_;
-		return (buffer_ >> n_) & 1;
+	Node()
+	{
+
 	}
 
-	uint32_t read(uint8_t n) {
-		uint32_t u = 0;
-		while (n-- > 0) {
-			u = (u << 1) | read_bit();
-		}
-		return u;
+	Node(uint8_t sym, uint8_t lenght, double prob, Node* left, Node* right)
+	{
+		sym_ = sym;
+		length_ = lenght;
+		prob_ = prob;
+		left_ = left;
+		right_ = right;
+
 	}
 
-	uint32_t operator()(uint8_t n) {
-		return read(n);
-	}
-
-	bool fail() const {
-		return is_.fail();
-	}
-
-	explicit operator bool() const {
-		return !fail();
-	}
 };
 
-template<typename T>
-std::ostream& raw_write(std::ostream& os, const T& val, size_t size = sizeof(T)) {
-	return os.write(reinterpret_cast<const char*>(&val), size);
+
+bool compare(Node  *a, Node *b)
+{
+	if (a->prob_ != b->prob_)
+	{
+		
+		return a->prob_ > b->prob_;
+	}
+	else 
+	{
+		return a->sym_ < b->sym_;
+	}
+	
+	
+	
 }
-class bitwriter {
-	uint8_t buffer_;
-	uint8_t cur_bit_;
+struct Code {
+	uint8_t sym;
+	uint8_t length;
+	uint32_t code;
+
+};
+
+
+bool compare_by_length(Code a, Code b)
+{
+	if (a.length != b.length)
+	{
+		return a.length < b.length;
+	}
+
+	return a.sym < b.sym;
+
+}
+
+
+
+void compute_length(Node* &vec, uint8_t length)
+{
+	
+	if (vec->left_ == 0 && vec->right_ == 0)
+	{
+		vec->length_ = length;
+		return;
+	}
+	length+=1;
+	compute_length(vec->left_, length);
+	compute_length(vec->right_, length);
+
+
+}
+
+
+
+void getLeafs(Node* & tree, std::vector<Code>& leaf)
+{
+	if (tree->left_ == 0 && tree->right_ == 0)
+	{
+		Code c;
+		c.sym = tree->sym_;
+		c.length = tree->length_;
+		c.code = 0; 
+		leaf.push_back(c);
+		return;
+	}
+
+	getLeafs(tree->left_, leaf);
+	getLeafs(tree->right_, leaf);
+}
+
+
+template<typename T>
+std::ostream& raw_write(std::ostream& os, T val, size_t size = sizeof(T))
+{
+	return os.write(reinterpret_cast<char*>(&val), size);
+}
+
+class Bitwriter {
+
+	uint8_t buffer_=0;
 	int n_ = 0;
-	//generico output stream
-	/*teniamo una reference allo stream di output*/
 	std::ostream& os_;
-	//gli stream non prevendono l'assegnamento
 
 
 	std::ostream& write_bit(uint8_t bit)
 	{
-		//scrive il bit meno significativo di BIT
 		buffer_ = (buffer_ << 1) | (bit & 1);
 		++n_;
-		if (n_ == 8) {
+		if (n_ == 8)
+		{
 			raw_write(os_, buffer_);
 			n_ = 0;
 		}
+
 		return os_;
 	}
-
 
 public:
-	bitwriter(std::ostream& os) : os_(os) { }
-	std::ostream& write(uint32_t u, uint8_t n)
-	{
 
-		for (int i = n - 1; i >= 0; --i)
+	Bitwriter(std::ostream& os) : os_(os) {}
+
+
+	std::ostream& write(uint32_t u, uint32_t n)
+	{
+		while (n-- > 0)
 		{
-			write_bit(u >> i);
+			write_bit((u >> n));
 		}
+
 		return os_;
 	}
 
 
-
-	//alternativa per chiamare la write
-	std::ostream& operator()(uint32_t u, uint8_t n) {
+	std::ostream& operator()(uint32_t u, uint32_t n)
+	{
 		return write(u, n);
-
 	}
 
-	std::ostream& flush(uint32_t bit = 0)
+	std::ostream& flush(uint8_t bit = 0)
 	{
 		while (n_ > 0)
 		{
 			write_bit(bit);
 		}
+
 		return os_;
 	}
 
-	~bitwriter() {
+	~Bitwriter() {
 		flush();
 	}
-
 };
 
 
 
-struct node {
+void create_code(std::vector<Code>& codes)
+{
+	uint32_t current_code = 0;
+	uint8_t dim = 1;
 
-	char symb_;
-	double prob_;
-	int len_ = 0;
-	node* left_;
-	node* right_;
-
-
-	node(char sym, double prob, int len, node *left, node *right) {
-		symb_ = sym;
-		prob_ = prob;
-		left_ = left;
-		len_ = len;
-		right_ = right;
-	}
-
-};
-
-struct triplets {
-
-	char sym_;
-	uint8_t len_, val_;
-	
-	triplets(char sym, uint8_t len, uint8_t val)
+	for (auto& c : codes)
 	{
-		sym_ = sym;
-		len_ = len;
-		val_ = val;
-	}
-	
-};
+		if (c.length == dim)
+		{
+			c.code = current_code;
+		}
+		else
+		{
+			for (int i = dim; i < c.length; ++i)
+			{
+				current_code = (current_code << 1);
+			}
+			c.code = current_code;
 
-bool compare_by_prob(const node* a, const node* b)
-{
-	return a->prob_  >b->prob_;
+		}
+		++current_code;
+		dim = c.length;
+	}
+
+	return;
+
+
 }
-bool compare_by_length(const triplets& a, const triplets& b)
+
+Code find_code(std::vector<Code> &codes, char sym)
 {
-	return a.len_ < b.len_;
-}
-void calcolate_length(node*tree,std::vector<triplets> &code,int  len)
-{
-	if (tree->left_ == NULL && tree->right_ == 0)
+	for (auto& c : codes)
 	{
-		tree->len_ = len;
-		code.push_back(triplets(tree->symb_, tree->len_, 0));
-		return;
+		if (c.sym == sym)
+		{
+			return c;
+		}
 	}
 
-	calcolate_length(tree->left_, code, len + 1);
-	calcolate_length(tree->right_, code, len + 1);
-
-
+	Code c;
+	c.code = -1;
+	return c;
 }
 
 
-int compress_by_huff(std::string filein, std::string fileout) {
-	
+bool write_output(std::string& filein, std::string& fileout, std::vector<Code>& codes)
+{
+	std::ofstream os(fileout, std::ios::binary);
 	std::ifstream is(filein, std::ios::binary);
+	if (!os || !is)
+	{
+		return false;
+	}
+
+	uint8_t table_enties = (uint8_t)codes.size();
+	uint32_t num_symbols = (uint32_t)codes.size();
+	Bitwriter bw(os);
+
+	os << "HUFFMAN2";
+	os << table_enties;
+
+	//scrivo le entriers
+	for (auto& c : codes)
+	{
+		bw(c.sym, 8);
+		bw(c.length, 5);
+	}
+
+	num_symbols = (num_symbols & 0x0000FFFF) << 16 | (num_symbols & 0xFFFF0000) >> 16;
+	num_symbols = (num_symbols & 0x00FF00FF) << 8 | (num_symbols & 0xFF00FF00) >> 8;
+
+	bw(num_symbols, 32);
+
+	char ch;
+	Code val;
+	//codifico i dati 
+	while (is.read(&ch, 1))
+	{
+		val=find_code(codes, ch);
+		
+
+		if (val.code != -1)
+		{
+			bw(val.code, val.length);
+		}
+		
+	}
+
+	return true;
+}
+
+
+int encode_canonical_huffman(std::string filein, std::string fileout)
+{
+	if (filein.empty() || fileout.empty()) {
+		return 1;
+	}
+
+	std::ifstream is(filein, std::ios::binary);
+	std::unordered_map<char, double> tuple;
 	if (!is)
 	{
 		return 1;
 	}
-	std::unordered_map<char,double> frequencies;
-	bitreader br(is);
+	char ch;
 	int sum = 0;
-	std::vector<char> symbol;
-	//memorizzo in posizione del num letto l'occorrenza di tale valore
 	while (1)
 	{
-		int num = br.read(8);
-		if (br.fail())
-		{
+		if (!(is.read(&ch, 1))) {
 			break;
 		}
-		symbol.push_back(num);
-		frequencies[num] += 1;
+		tuple[ch] += 1;
 		sum += 1;
+		
 	}
-	//converto in probabilità
-	for (auto& x : frequencies)
-	{
-		x.second /= sum;
-	}
-	//creo l'albero di Huffman
-	std::vector<node*> tree;
-	for (auto& x : frequencies)
-	{
-		tree.push_back(new node(x.first, x.second, 0, NULL, NULL));
-	}
-	//ordino il vettore per probabilità decrescente
-	
-	while (tree.size() != 1)
-	{
-		std::sort(tree.begin(), tree.end(), compare_by_prob);
-		node* left = tree.back();
-		tree.pop_back();
-		node* right = tree.back();
-		tree.pop_back();
-		double prob = left->prob_ + right->prob_;
-		tree.push_back(new node(0, prob, 0, left, right));
-	}
-	std::vector<triplets> codes;
-	calcolate_length(tree[0], codes, 0);
-	std::sort(codes.begin(), codes.end(), compare_by_length);
-	triplets curr = { 0,0,0 };
-	//calcolo i codici canonici
-	for (auto& c : codes)
-	{
-		c.val_ = curr.val_ <<= c.len_ - curr.len_;
-		curr.len_ = c.len_;
-		++curr.val_;
-	}
-	std::ofstream os(fileout, std::ios::binary);
-	bitwriter bw(os);
-	std::string magicnumber = "HUFFMAN2";
-	os << magicnumber;
-	uint8_t entries = codes.size();
-	os << entries;
-	std::sort(codes.begin(), codes.end(), compare_by_length);
-	for (auto& c : codes)
-	{
-		os << c.sym_;
-		bw.write(c.len_, 5);
-	}
-	std::unordered_map<char, triplets>  table;
-	for (auto& c : codes)
-	{
-		table[c.sym_] = c;
+	is.close();
 
-	}
-	//codifica dei simboli
-	for (auto& x : symbol)
+	//conversione delle frequenze in probabilità
+	for (auto& t : tuple)
 	{
-		
-		auto it=table.find(x);
-		if (it!=table.end())
-		{
-			bw.write(it->second.val_, 5);
-		}
-		
+		t.second = (t.second / sum);
+	}
+
+	std::vector<Node *> nodes;
+	
+	//conversione delle tuple in nodi
+	for (auto& t : tuple)
+	{
+		Node tmp;
+		tmp.sym_ = t.first;
+		tmp.prob_ = t.second;
+		tmp.length_ = 0;
+		tmp.left_ = NULL;
+		tmp.right_ = NULL;
+		nodes.push_back(new Node(tmp.sym_, tmp.length_, tmp.prob_, tmp.left_, tmp.right_));
+	}
+	
+	//creazione albero di huffman
+	while (nodes.size()>1)
+	{
+		Node tmp;
+		std::sort(nodes.begin(), nodes.end(), compare);
+		Node *right=nodes.back();
+		nodes.pop_back();
+		Node *left =nodes.back();
+		nodes.pop_back();
+		tmp.prob_ = left->prob_ + right->prob_;
+		tmp.left_ = left;
+		tmp.right_ = right;
+		nodes.push_back(new Node(tmp.sym_,tmp.length_,tmp.prob_,tmp.left_,tmp.right_));
+	}
+	uint8_t i = 0;
+	compute_length(nodes[0],i);
+	std::vector<Code>  codes;
+	getLeafs(nodes[0], codes);
+	//ordino i codici per lunghezza crescente
+	std::sort(codes.begin(), codes.end(), compare_by_length);
+	//creo i codici
+	create_code(codes);
+	
+	//stampo i dati sul file
+	bool res=write_output(filein,fileout, codes);
+	if (!res)
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
+
+int decode_canonical_huffman(std::string filein, std::string fileout)
+{
+	if (filein.empty() || fileout.empty()) {
+		return 1;
 	}
 
 	return 0;
 }
 
 
-
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
 	if (argc != 4)
 	{
-		std::cout << "Error incorrect number of parameters\n";
 		return 1;
 	}
 
-	
-	std::string filein(argv[2]);
-	std::string fileout(argv[3]);
-	if (strcmp(argv[1],"c")==0)
+	std::string option = argv[1];
+	int res;
+	if (option == "c")
 	{
-		compress_by_huff(filein,fileout);
+		res=encode_canonical_huffman(argv[2],argv[3]);
+	}
+	else if (option == "d")
+	{
+		res=decode_canonical_huffman(argv[2],argv[3]);
+	}
+	else
+	{
+		return false;
 	}
 
-
-
-
-
-
+	return res;
 }
-

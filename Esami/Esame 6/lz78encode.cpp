@@ -1,202 +1,184 @@
-#include <iostream>
+#include <string>
 #include <fstream>
 #include <vector>
-#include <map>
-#include <cmath>
-#include <bitset>
+#include <unordered_map>
+#include <math.h>
 
-template <typename T>
-std::ostream& raw_write(std::ostream &os, T &val, size_t size = sizeof(T))
+template<typename T>
+std::ostream& raw_write(std::ostream& os, T val, size_t size = sizeof(T))
 {
 	return os.write(reinterpret_cast<char*>(&val), size);
 }
 
-class bitwriter {
-	int  n_=0;
-	uint8_t buffer_;
-	std::ostream &os_;
 
-	std::ostream& write_bit(uint8_t bit)
+class Bitwriter {
+	uint8_t buffer_=0;
+	int n_ = 0;
+	std::ostream& os_;
+
+	std::ostream& write_bit(uint32_t bit)
 	{
-		buffer_ = (buffer_ << 1) | (bit & 1);
+		buffer_ = (buffer_ << 1) | (bit );
 		++n_;
 		if (n_ == 8)
 		{
 			raw_write(os_, buffer_);
 			n_ = 0;
 		}
+		
+		
 		return os_;
 	}
 
+
+
 public:
-	bitwriter(std::ostream &os): os_(os){}
+	Bitwriter(std::ostream& os) : os_(os) {}
 
 	std::ostream& write(uint32_t u, uint8_t n)
 	{
-		for (int i = n - 1; i >= 0; --i)
+		while (n-- > 0)
 		{
-			write_bit(u >> i);
+			write_bit((u >> n));
 		}
 		return os_;
 	}
 
-	std::ostream& operator()(uint32_t u, uint8_t n) {
+	std::ostream& operator()(uint32_t u, int n)
+	{
 		return write(u, n);
 	}
 
-	std::ostream& flush(uint32_t bit = 0)
+
+
+	std::ostream& flush(uint8_t bit = 0)
 	{
-		while(n_>0)
+		while (n_> 0)
 		{
 			write_bit(bit);
 		}
 		return os_;
 	}
 
-	~bitwriter() {
+	~Bitwriter()
+	{
 		flush();
 	}
+
+
 };
 
 
-void write_with_n_bit(int x,int &numbit)
-{
-	int n_bit = (int)log2(x) + 1;
-	if (n_bit > numbit)
-	{
-		numbit = n_bit;
-	}
-	return;
-}
 
-bool is_full (int size, int maxbits)
-{
-	int n =(int) pow(2, maxbits);
-	if (size == n)
-	{
-		return true;
-	}
-	return false;
-}
+
+
 
 bool lz78encode(const std::string& input_filename, const std::string& output_filename, int maxbits)
 {
+	if (input_filename.empty() || output_filename.empty())
+	{
+		return false;
+	}
 	if (maxbits < 1 || maxbits>30)
 	{
 		return false;
 	}
+
 	std::ifstream is(input_filename, std::ios::binary);
-	std::ofstream os(output_filename);
+	std::ofstream os(output_filename, std::ios::binary);
 	if (!is || !os)
 	{
 		return false;
 	}
-	std::string magic_number ="LZ78";
-	bitwriter bw(os);
-	for (auto &c: magic_number)
+	
+	
+	Bitwriter bw(os);
+	std::string magic_number = "LZ78";
+
+	for (auto& c : magic_number)
 	{
-		os.write(reinterpret_cast<char*> (&c), 1);
+		
+		
+			bw.write(c, 8);
+		
 	}
+	uint8_t m = maxbits;
+	bw.write(m, 5);
 
-	std::map<std::string,int> dict; //mappa con chiave:match valore: posizione all'interno del dizionario
-	bw.write(maxbits, 5);
+	std::unordered_map<std::string,int> dictionary;
+	int i = 1;
 	char c;
-	int i = 0;
-	std::string str;
-	int numbit = 0, last_occ=0;
-
+	int last_occ = 0, dim_bits = 0, max_size =(int) pow(2, maxbits);
+	std::string ch;
 	while (1)
 	{
-		if (!is.read(&c, 1))
+		if (!(is.read(&c, 1)))
 		{
+			if (ch.length()!=0)
+			{
+			
+				ch.pop_back();
+				auto it = dictionary.find(ch);
+				int bit = std::ceil(log2l(i));
+				if (it != dictionary.end())
+				{
+					last_occ = it->second;
+				}
+				else
+				{
+					last_occ = 0;
+				}
+				bw.write(last_occ, bit);
+				bw.write(c, 8);
+				
+
+			}
 			break;
 		}
-		str += c;
-		//se il dizionario è vuoto
-		if (i == 0)
+		
+		ch += c;
+		auto it = dictionary.find(ch);
+		
+		if (it != dictionary.end())
 		{
-			
-			
-			
-			dict[str] = i; //aggiungo l'elemento dentro al dizionario
-			++i;
-			
-			bw.write(c, 8); //devo scriverlo senza alcuna occorrenza
-			str.clear();
+			last_occ = it->second;
 		}
 		else
 		{
 			
-			auto it = dict.find(str);
-			if (it != dict.end()) //provo a fare match con la sequenza attuale
-			{
-				
-				last_occ = it->second; //se ho fatto match mi segno la posizone del match
-			}
-			else
-			{
-				
-				
-				dict[str] = i; //se non ho fatto match, salvo la stringa
+				dictionary[ch] = i;
+				int bit= std::ceil(log2l(i));
+				//stampo
+				if (i == 1)
+				{
+					bw.write(last_occ, 0);
+				}
+				else
+				{
+					bw.write(last_occ, bit);
+				}
+				bw.write(ch[ch.size() - 1],8);
 				++i;
 				
-				numbit = (int)log2((dict.size() - 1))+1; //determino il numero di bit che servono per scrivere l'occorrenza
-				bw.write((last_occ+1), numbit);// devo scrivere la posizione+1 perchè parte da zero
-				bw.write(c, 8);
-				
-				str.clear();//svuoto la stringa per fare matching
-				
-				if (is_full(dict.size(), maxbits)) //controllo che non si abbia raggiunto la massima dimensione di rappresentazione
+				if (dictionary.size() ==max_size) //forse ci va max_size-1
 				{
-
-					/*se ho raggiunto la massima dimensione 
-					svuoto il dizionario*/
-					i = 0;
-					dict.clear();
-					numbit = 0;
+					dictionary.clear(); //svuoto il dizionario
+					i = 1;
 				}
-				/*la metto pari ad -1 per gestire i casi 
-				in cui non sia presente 
-				un match nessun match nel dizionario, 
-				quindi last_occ sarà pari a zero*/
-				last_occ = -1;
 			
-			}
-		}	
-	}
-	last_occ = -1;
-	c = str[str.length() - 1];
-	str.pop_back();
-	auto it = dict.find(str);
-	if (it != dict.end())
-	{
-		last_occ = it->second+1;
-	}
-	else
-	{
-		last_occ = 0;
-	}
-	bw.write(last_occ, numbit); //scrivo un ultima volta l'occ e il carattere
-	bw.write(c, 8);
-	return true;
+			last_occ = 0;
+			ch.clear(); //svuoto
+
+		}
+
 	
 
+	}
 
+
+	return true;
+
+		
 }
 
-//int main(int argc, char** argv)
-//{
-//	if (argc != 4)
-//	{
-//		std::cout << "error number incorrect of parameters";
-//		return false;
-//	}
-//	int maxbits= atoi(argv[3]);
-//	if (maxbits < 1 || maxbits>30)
-//	{
-//		std::cout << "maxbits must be between 1 and 30";
-//		return false;
-//	}
-//	bool res = lz78encode(argv[1], argv[2], maxbits);
-//	return res;
-//}
+

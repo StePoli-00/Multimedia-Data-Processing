@@ -1,0 +1,6 @@
+1) controllare se Y sta in un range di (16,235), mentre Cb,Cr in (16,240), arrotondarli di conseguenza
+2) usare la matrice di conversione
+	R=[1164 	0  1596]-[Y][16]/1000
+	G=[1164 -392  -813 ]-[Cb][128]/1000
+	B=[1164 2017   0   ]-[Cr][128]/1000
+3) controllare se R,G, stanno nel range (0,255)

@@ -1,7 +1,5 @@
 #include "bit.h"
 
-
-
 int  compress(char* filein, char* fout)
 {
 	std::ifstream is(filein);
@@ -24,6 +22,7 @@ int  compress(char* filein, char* fout)
 	}
 	return 0;
 }
+
 
 
 int decompress(char* filein, char* fout) {
@@ -50,13 +49,21 @@ int decompress(char* filein, char* fout) {
 	unmap(v);
 	for (size_t i = 0; i < v.size(); i++)
 	{
-		os << v[i] << '\n';
+		if (i == v.size() - 1)
+		{
+			os << v[i];
+		}
+		else
+		{
+			os << v[i] << "\n";
+		}
 	}
 
 	return 0;
 
 
 }
+
 
 int main(int argc, char** argv) {
 

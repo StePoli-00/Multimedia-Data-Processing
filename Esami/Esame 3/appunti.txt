@@ -1,0 +1,4 @@
+
+
+N=(length+7)/15
+xxxx length-(N*15-7)
