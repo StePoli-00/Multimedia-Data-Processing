@@ -12,11 +12,13 @@ Esame 16  funziona solo il primo test case
 Esame 17
 Esame 18
 Esame 19
+Esame 20 (non il test case con Bibbia)
 
 
 Esami incompleti:
 Esame 4-solo convertPBM
 Esame 10 
+Esame 11
 Esame 12 guardare soluzione Canderolo
 Esame 14 (la morte)
 
