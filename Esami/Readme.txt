@@ -2,6 +2,7 @@ Esami completi:
 Esame 1
 Esame 2
 Esame 3
+Esame 4
 Esame 5 (piccoli errori di approssimazione)
 Esame 6 (non funzionano i test case con bibbia)
 Esame 7
@@ -16,7 +17,6 @@ Esame 20 (non il test case con Bibbia)
 
 
 Esami incompleti:
-Esame 4-solo convertPBM
 Esame 10 
 Esame 11
 Esame 12 guardare soluzione Canderolo
