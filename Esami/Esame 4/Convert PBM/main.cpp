@@ -4,12 +4,13 @@ extern void save_pbm(Image& im, std::string& fileout);
 int main(int argc, char** argv)
 {
 
-	if (argc != 2)
+	if (argc != 3)
 	{
 		return 1;
 	}
 
 	std::string filename(argv[1]);
+	std::string fileout(argv[2]);
 	BinaryImage bi;
 	bool res = bi.ReadFromPBM(filename);
 	Image im;
@@ -19,7 +20,7 @@ int main(int argc, char** argv)
 	}
 	
 	im = BinaryImageToImage(bi);
-	std::string fileout = "output.pbm";
+
 	save_pbm(im,fileout);
 	return 0;
 }

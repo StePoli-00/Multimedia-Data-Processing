@@ -3,6 +3,18 @@
 #include <cmath>
 #include <fstream>
 
+
+void get_pixels(std::vector<uint8_t>& vec, uint8_t pixel, int n, int cnt = 0)
+{
+    uint8_t mask, val;
+    while (n-- > cnt)
+    {
+        mask = 1 << n;
+        val = (pixel & mask) >> n;
+        vec.push_back(val);
+    }
+}
+
 Image BinaryImageToImage(const BinaryImage& bimg) {
 
     if (bimg.ImageData.empty())
@@ -13,10 +25,37 @@ Image BinaryImageToImage(const BinaryImage& bimg) {
     Image im;
     im.H = bimg.H;
     im.W = bimg.W;
-    //im.resize(im.rows(), im.cols());
-    
 
-    if ((im.cols() % 8) == 0)
+    int cols = bimg.W / 8;
+    int resto = bimg.W % 8;
+
+    if (resto != 0)
+    {
+        cols++;
+    }
+ 
+  
+    for (int  r = 0; r < bimg.H; r++)
+    {
+        for (int  c = 0; c < cols; c++)
+        {
+
+            uint8_t pixel = bimg.ImageData.at(r * cols + c);
+            if (c == cols - 1)
+            {
+                get_pixels(im.ImageData, pixel, 8, 8 - resto);
+            }
+            else
+            {
+                get_pixels(im.ImageData, pixel, 8);
+            }
+            
+          
+        }
+ 
+    }
+
+   /* if ((im.cols() % 8) == 0)
     {
         int pad = 8 - (im.cols() % 8);
 
@@ -38,18 +77,18 @@ Image BinaryImageToImage(const BinaryImage& bimg) {
             im.ImageData.push_back((val & 0b0000'0010) >> 1);
             im.ImageData.push_back((val & 0b0000'0001) >> 0);
         }
-    }
+    }*/
 
-
+    //conversione 0->255
     for (auto &p : im.ImageData)
     {
-        if (p == 1)
+        if (p == 0)
         {
-            p = 0;
+            p = 255;
         }
         else
         {
-            p = 255;
+            p = 0;
         }
     }
 
@@ -70,7 +109,7 @@ void save_pbm(Image &im,std::string &fileout)
     os << std::to_string(im.cols()) + " " + std::to_string(im.rows()) + "\n";
    
 
-    for (int i = 0; i < im.ImageData.size(); ++i)
+    for (int i = 0; i < (int)im.ImageData.size(); ++i)
     {
         os.put(im.ImageData[i]);
     }

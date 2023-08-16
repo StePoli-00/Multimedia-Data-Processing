@@ -272,8 +272,8 @@ int main(int argc, char** argv)
     }
 
     //For con range-based for
-    auto start = v.begin();
-    auto stop = v.end();
+   /* auto start = v.begin();
+    auto stop = v.end();*/
     std::vector<double>::iterator it;
 
 

@@ -5,13 +5,49 @@
 #include <algorithm>
 #include <string>
 #include <functional>
+#include <unordered_map>
 #include <exception>
 #include "ppm.h"
 #include "main.h"
 using namespace std;
 
+unordered_map<char,unsigned long long> types = {
+
+	{'Z',sizeof(NULL)},
+	{'N',0},
+	{'T',sizeof(bool)},
+	{'F',sizeof(bool)},
+	{'i',sizeof(int8_t)},
+	{'U',sizeof(uint8_t)},
+	
+};
 
 
+bool check_optimized_format(std::istream& is)
+{
+	uint8_t val = is.peek();
+	if (val == '#' || val == '$')
+	{
+		return true;
+		sizeof(char)
+	}
+	return false;
+}
+
+void read_optimized_format(std::istream& is, Ubjson& obj)
+{
+	
+	uint8_t val = is.get(); //estraggo il $
+	uint8_t type;
+	if (val == '$')
+	{
+		type = is.get();
+
+		
+	}
+	else if(val=='#')
+
+}
 
 
 class Ubjson {
@@ -47,11 +83,20 @@ public:
 
 			Ubjson obj;
 			obj.type_ = 'a';
-			while (val != ']') {
-				obj= load(is);
-				array_.push_back(obj);
-				val = is.peek();
+			bool res=check_optimized_format(is);
+			if (res)
+			{
+
 			}
+			else {
+				while (val != ']') {
+					obj = load(is);
+					array_.push_back(obj);
+					val = is.peek();
+				}
+
+			}
+			
 			return obj;
 		}
 		else if (val == 'i' || val=='U')
@@ -83,20 +128,7 @@ public:
 
 
 			
-			val = is.get(); //estraggo il $
-			this->type_ = is.get();
-			val = is.get(); //estraggo il #
-			val = is.get();
-			uint8_t n = is.get();
-
-			for (int i = 0; i < n; ++i)
-			{
-				Ubjson obj;
-				obj.type_ = 'n';
-				is.read(reinterpret_cast<char*>(&obj.num_), sizeof(uint8_t));
-				this->array_.push_back(obj);
-
-			}
+			
 			return 
 
 
